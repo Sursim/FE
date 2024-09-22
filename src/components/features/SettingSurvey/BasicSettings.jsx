@@ -6,8 +6,7 @@ import calendar from "../../../assets/images/calendar.png";
 export const BasicSettings = () => {
   const [date, setDate] = useState([new Date(), new Date()]);
   const [isCalendarOpen, setCalendarOpen] = useState(false);
-  const [isActive, setIsActive] = useState(false);
-  const [isActive2, setIsActive2] = useState(false);
+  const [activeResult, setActiveResult] = useState(null);
 
   const handleDateImageClick = () => {
     setCalendarOpen(!isCalendarOpen);
@@ -19,11 +18,11 @@ export const BasicSettings = () => {
   };
 
   const handleButtonClick = () => {
-    setIsActive((prev) => !prev);
+    setActiveResult("nonactive");
   };
 
   const handleButtonClick2 = () => {
-    setIsActive2((prev) => !prev);
+    setActiveResult("active");
   };
 
   return (
@@ -47,11 +46,17 @@ export const BasicSettings = () => {
       <Underline />
       <ResultContainer>
         <Text>응답 결과 공개</Text>
-        <ResultButton1 isActive={isActive} onClick={handleButtonClick}>
+        <ResultButton1
+          isActive={activeResult === "nonactive"}
+          onClick={handleButtonClick}
+        >
           비공개
         </ResultButton1>
         <ResultText>/</ResultText>
-        <ResultButton2 isActive={isActive2} onClick={handleButtonClick2}>
+        <ResultButton2
+          isActive={activeResult === "active"}
+          onClick={handleButtonClick2}
+        >
           공개
         </ResultButton2>
       </ResultContainer>
@@ -116,13 +121,19 @@ const DateImage = styled.img`
 
 const DateInput = styled.input`
   width: 400px;
+  height: 30px;
   border: none;
   margin-left: 460px;
+  margin-top: 28px;
   background-color: #ffffff;
   &::placeholder {
     font-size: 25px;
     font-weight: 700;
     color: #cecece;
+  }
+  &:focus {
+    outline: none;
+    border-bottom: 1px solid #019a13;
   }
 `;
 
@@ -201,6 +212,10 @@ const TimeInput = styled.input`
 
   &::placeholder {
     color: transparent;
+  }
+  &:focus {
+    outline: none;
+    border: 1px solid #019a13;
   }
 `;
 

@@ -4,21 +4,19 @@ import checkbox from "../../../assets/images/checkbox/checkbox.png";
 import { RespondentModal } from "../../common/Modal/RespondentModal";
 
 export const RespondentSettings = () => {
-  const [isActive, setIsActive] = useState(false);
-  const [isActive2, setIsActive2] = useState(false);
-  const [isActive3, setIsActive3] = useState(false);
+  const [activeGender, setActiveGender] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
 
   const handleButtonClick = () => {
-    setIsActive((prev) => !prev);
+    setActiveGender("male");
   };
 
   const handleButtonClick2 = () => {
-    setIsActive2((prev) => !prev);
+    setActiveGender("female");
   };
 
   const handleButtonClick3 = () => {
-    setIsActive3((prev) => !prev);
+    setActiveGender("other");
   };
 
   const handleModalClick = () => {
@@ -45,15 +43,24 @@ export const RespondentSettings = () => {
       <Underline2 />
       <GenderContainer>
         <Text>응답자 성별</Text>
-        <GenderButton1 isActive={isActive} onClick={handleButtonClick}>
+        <GenderButton1
+          isActive={activeGender === "male"}
+          onClick={handleButtonClick}
+        >
           남
         </GenderButton1>
         <GenderText>/</GenderText>
-        <GenderButton2 isActive={isActive2} onClick={handleButtonClick2}>
+        <GenderButton2
+          isActive={activeGender === "female"}
+          onClick={handleButtonClick2}
+        >
           여
         </GenderButton2>
         <GenderText>/</GenderText>
-        <GenderButton2 isActive={isActive3} onClick={handleButtonClick3}>
+        <GenderButton2
+          isActive={activeGender === "other"}
+          onClick={handleButtonClick3}
+        >
           무관
         </GenderButton2>
       </GenderContainer>
@@ -134,6 +141,10 @@ const AgeInput = styled.input`
 
   &::placeholder {
     color: transparent;
+  }
+  &:focus {
+    outline: none;
+    border: 1px solid #019a13;
   }
 `;
 

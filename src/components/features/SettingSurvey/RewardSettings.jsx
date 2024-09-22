@@ -3,15 +3,14 @@ import styled from "styled-components";
 import uploadbtn from "../../../assets/images/buttons/uploadbtn.png";
 
 export const RewardsSettings = () => {
-  const [isActive, setIsActive] = useState(false);
-  const [isActive2, setIsActive2] = useState(false);
+  const [activeRewardType, setActiveRewardType] = useState(null);
 
   const handleButtonClick = () => {
-    setIsActive((prev) => !prev);
+    setActiveRewardType("random");
   };
 
   const handleButtonClick2 = () => {
-    setIsActive2((prev) => !prev);
+    setActiveRewardType("firstCome");
   };
 
   return (
@@ -38,11 +37,17 @@ export const RewardsSettings = () => {
       <Underline2 />
       <RewardContainer>
         <Text>추가 리워드 제공 방식</Text>
-        <RewardButton1 isActive={isActive} onClick={handleButtonClick}>
+        <RewardButton1
+          isActive={activeRewardType === "random"}
+          onClick={handleButtonClick}
+        >
           랜덤추첨
         </RewardButton1>
         <RewardText>/</RewardText>
-        <RewardButton2 isActive={isActive2} onClick={handleButtonClick2}>
+        <RewardButton2
+          isActive={activeRewardType === "firstCome"}
+          onClick={handleButtonClick2}
+        >
           선착순
         </RewardButton2>
       </RewardContainer>
@@ -109,6 +114,10 @@ const TypeInput = styled.input`
   &::placeholder {
     color: transparent;
   }
+  &:focus {
+    outline: none;
+    border: 1px solid #019a13;
+  }
 `;
 
 const ImageContainer = styled.div`
@@ -156,6 +165,10 @@ const CountInput = styled.input`
 
   &::placeholder {
     color: transparent;
+  }
+  &:focus {
+    outline: none;
+    border: 1px solid #019a13;
   }
 `;
 
