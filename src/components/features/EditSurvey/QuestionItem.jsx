@@ -8,7 +8,7 @@ import { CheckboxModal } from "../../common/Modal/CheckboxModal";
 
 export const QuestionItem = ({ question, setQuestions }) => {
   const [isModalOpen, setModalOpen] = useState(false);
-  const [options, setOptions] = useState(question.options);
+  const [options, setOptions] = useState([...question.options]);
   const checkboxContainerRef = useRef(null);
 
   const handleOpenModal = () => {
@@ -20,28 +20,16 @@ export const QuestionItem = ({ question, setQuestions }) => {
   };
 
   const handleQuestionChange = (e) => {
-    setQuestions((prev) => {
-      if (!Array.isArray(prev)) return []; // prev가 배열이 아닐 경우 빈 배열 반환
-      return prev.map((q) =>
+    setQuestions((prev) =>
+      prev.map((q) =>
         q.id === question.id ? { ...q, question: e.target.value } : q
-      );
-    });
+      )
+    );
   };
 
-  // const handleQuestionChange = (e) => {
-  //   setQuestions((prev) =>
-  //     prev.map((q) =>
-  //       q.id === question.id ? { ...q, question: e.target.value } : q
-  //     )
-  //   );
-  // };
-
   const handleAddOption = () => {
-    const newOption = {
-      id: options.length + 1,
-      text: `응답 ${options.length + 1}`,
-    };
-    setOptions((prev) => [...(Array.isArray(prev) ? prev : []), newOption]);
+    const newOption = `응답 ${options.length + 1}`;
+    setOptions((prev) => [...prev, newOption]);
   };
 
   return (
@@ -56,17 +44,17 @@ export const QuestionItem = ({ question, setQuestions }) => {
           <CheckboxImage src={checkbox} alt="체크박스 이미지" />
         </CheckboxContainer>
       </TitleContainer>
-      <DescriptionContainer>
+      <DescriptionContainer height={options.length * 50 + 150}>
         <Input
           type="text"
           placeholder="질문을 작성해주세요."
           value={question.question}
           onChange={handleQuestionChange}
         />
-        {question.options.map((option, index) => (
+        {options.map((option, index) => (
           <OptionContainer key={index}>
             <OptionImage src={circle} alt="응답" />
-            <OptionText>응답 {index + 1}</OptionText>
+            <OptionText>{option}</OptionText>
           </OptionContainer>
         ))}
         <AddOptionButton onClick={handleAddOption}>
@@ -138,7 +126,7 @@ const CheckboxImage = styled.img`
 
 const DescriptionContainer = styled.div`
   width: 830px;
-  height: 250px;
+  height: ${(props) => props.height}px;
   margin-top: -10px;
   margin-left: 80px;
   background-color: #fafafa;
@@ -160,6 +148,10 @@ const Input = styled.input`
     font-weight: 600;
     color: #c5c5c5;
     text-align: flex-start;
+  }
+  &:focus {
+    outline: none;
+    border: 1px solid #019a13;
   }
 `;
 
