@@ -91,7 +91,7 @@ const SetButton = styled.button`
 
 const SurveyContainer = styled.div`
   width: 1100px;
-  height: 1400px;
+  height: 1310px;
   display: flex;
   flex-direction: column;
   margin-top: 30px;
@@ -103,15 +103,17 @@ const SurveyContainer = styled.div`
 `;
 
 const SurveyButton = styled.button`
-  width: 250px;
-  height: 80px;
+  width: 270px;
+  height: 70px;
+  border: none;
   border-radius: 12px;
+  padding: 10px 0;
   background-color: #06070c;
-  font-size: 32px;
-  font-weight: 700;
+  margin-left: 740px;
+  margin-top: 40px;
+  cursor: pointer;
+  font-size: 30px;
+  font-weight: 500;
   color: #ffffff;
   text-align: center;
-  margin-top: 30px;
-  margin-left: 765px;
-  cursor: pointer;
 `;
