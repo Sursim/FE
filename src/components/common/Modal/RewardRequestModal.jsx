@@ -74,8 +74,8 @@ const ModalButton = styled.button`
 `;
 
 const ButtonImage = styled.img`
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
 `;
 
 const ModalTitleContainer = styled.div`
