@@ -9,6 +9,7 @@ import image6 from "../../../assets/icons/Reward/6.png";
 import image7 from "../../../assets/icons/Reward/7.png";
 import image8 from "../../../assets/icons/Reward/8.png";
 import point from "../../../assets/images/point.png";
+import { RewardRequestModal } from "../../common/Modal/RewardRequestModal";
 
 const rewardsData = [
   {
@@ -21,14 +22,14 @@ const rewardsData = [
   {
     id: 2,
     title: "GS25 전용 3천원권",
-    points: 5000,
+    points: 3000,
     image: image2,
     size: { width: "121px", height: "51px" },
   },
   {
     id: 3,
     title: "해피콘 전용 3천원권",
-    points: 5000,
+    points: 3000,
     image: image3,
     size: { width: "206px", height: "131px" },
   },
@@ -137,6 +138,8 @@ const itemsPerPage = 8;
 export const RewardList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(rewardsData.length / itemsPerPage);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedReward, setSelectedReward] = useState(null);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -147,12 +150,22 @@ export const RewardList = () => {
     currentPage * itemsPerPage
   );
 
+  const handleCardClick = (reward) => {
+    setSelectedReward(reward);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedReward(null);
+  };
+
   return (
     <Container>
       <RewardsGrid>
         {displayedRewards.map((reward) => (
           <RewardCard key={reward.id}>
-            <CardContainer>
+            <CardContainer onClick={() => handleCardClick(reward)}>
               <RewardImage src={reward.image} alt={reward.title} />
             </CardContainer>
             <RewardDetails key={reward.id}>
@@ -176,6 +189,14 @@ export const RewardList = () => {
           </PageButton>
         ))}
       </Pagination>
+
+      {isModalOpen && (
+        <RewardRequestModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          reward={selectedReward}
+        />
+      )}
     </Container>
   );
 };
@@ -210,6 +231,7 @@ const CardContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 `;
 
 const RewardImage = styled.img`
@@ -232,7 +254,7 @@ const RewardTitle = styled.h2`
 const PointContainer = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 10px;
+  gap: 5px;
 `;
 
 const PointImage = styled.img`
