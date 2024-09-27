@@ -9,10 +9,6 @@ export const Header = () => {
   const location = useLocation();
   const [activeButton, setActiveButton] = useState("");
 
-  const handleLogin = () => {
-    navigate(login());
-  };
-
   const handleButtonClick = (buttonName) => {
     setActiveButton(buttonName);
     const routes = {
@@ -32,6 +28,10 @@ export const Header = () => {
 
     setActiveButton(routes[location.pathname] || "");
   }, [location.pathname]);
+
+  const handleLogin = () => {
+    navigate("/mypage");
+  };
 
   return (
     <Wrapper>
