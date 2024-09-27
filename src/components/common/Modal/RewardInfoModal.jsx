@@ -1,8 +1,30 @@
 import React from "react";
 import styled from "styled-components";
-import starbucksImage from "../../assets/images/starbucks.png";
+import starbucks from "../../../assets/icons/Reward/4.png";
+import clearbtn from "../../../assets/images/buttons/clearbtn.png";
+
+export const RewardInfoModal = ({ isOpen, onClose }) => {
+  if (!isOpen) return null;
+
+  return (
+    <ModalOverlay onClick={onClose}>
+      <ModalContent onClick={(e) => e.stopPropagation()}>
+        <ModalButton onClick={onClose}>
+          <ButtonImage src={clearbtn} alt="clearbtn" />
+        </ModalButton>
+        <ModalTitle>스타벅스 아메리카노 커피 쿠폰</ModalTitle>
+        <ModalImageContainer>
+          <ModalImage src={starbucks} alt="스타벅스 이미지" />
+        </ModalImageContainer>
+        <ModalText>100명, 랜덤 추첨</ModalText>
+      </ModalContent>
+    </ModalOverlay>
+  );
+};
 
 const ModalOverlay = styled.div`
+  width: 100vw;
+  height: 100vh;
   position: fixed;
   top: 0;
   left: 0;
@@ -18,8 +40,9 @@ const ModalOverlay = styled.div`
 const ModalContent = styled.div`
   background-color: white;
   padding: 20px;
-  border-radius: 4px;
-  width: 500px;
+  border-radius: 20px;
+  width: 400px;
+  height: 430px;
   max-width: 90%;
   position: relative;
   display: flex;
@@ -28,21 +51,28 @@ const ModalContent = styled.div`
 `;
 
 const ModalTitle = styled.h2`
-  margin-bottom: 10px;
+  font-size: 30px;
+  font-weight: 700;
+  color: #06070c;
 `;
 
 const ModalText = styled.p`
-  margin-top: 0;
+  font-size: 30px;
+  font-weight: 400;
+  color: #06070c;
 `;
 
 const ModalButton = styled.button`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
+  margin-left: 380px;
+  margin-top: 5px;
   border: none;
-  font-size: 1.5em;
   cursor: pointer;
+  background-color: #ffffff;
+`;
+
+const ButtonImage = styled.img`
+  width: 18px;
+  height: 18px;
 `;
 
 const ModalImageContainer = styled.div`
@@ -53,23 +83,6 @@ const ModalImageContainer = styled.div`
 `;
 
 const ModalImage = styled.img`
-  width: auto;
-  height: auto;
+  width: 100px;
+  height: 200px;
 `;
-
-export const RewardInfoModal = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
-
-  return (
-    <ModalOverlay onClick={onClose}>
-      <ModalContent onClick={(e) => e.stopPropagation()}>
-        <ModalButton onClick={onClose}>X</ModalButton>
-        <ModalTitle>스타벅스 아메리카노 커피 쿠폰</ModalTitle>
-        <ModalText>100명 랜덤 추첨</ModalText>
-        <ModalImageContainer>
-          <ModalImage src={starbucksImage} alt="스타벅스 이미지" />
-        </ModalImageContainer>
-      </ModalContent>
-    </ModalOverlay>
-  );
-};
