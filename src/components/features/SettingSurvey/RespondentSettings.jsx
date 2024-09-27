@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import checkbox from "../../../assets/images/checkbox/checkbox.png";
-import { RespondentModal } from "../../common/Modal/RespondentModal";
+// import checkbox from "../../../assets/images/checkbox/checkbox.png";
+// import { RespondentModal } from "../../common/Modal/RespondentModal";
 
 export const RespondentSettings = () => {
   const [activeGender, setActiveGender] = useState(null);
-  const [isModalOpen, setModalOpen] = useState(false);
+  // const [isModalOpen, setModalOpen] = useState(false);
 
   const handleButtonClick = () => {
     setActiveGender("male");
@@ -19,13 +19,13 @@ export const RespondentSettings = () => {
     setActiveGender("other");
   };
 
-  const handleModalClick = () => {
-    setModalOpen(true);
-  };
+  // const handleModalClick = () => {
+  //   setModalOpen(true);
+  // };
 
-  const handleModalClose = () => {
-    setModalOpen(false);
-  };
+  // const handleModalClose = () => {
+  //   setModalOpen(false);
+  // };
 
   return (
     <Container>
@@ -65,7 +65,7 @@ export const RespondentSettings = () => {
         </GenderButton2>
       </GenderContainer>
       <Underline />
-      <LiveContainer>
+      {/* <LiveContainer>
         <Text>응답자 거주지</Text>
         <LiveContainer2
           onClick={handleModalClick}
@@ -75,11 +75,11 @@ export const RespondentSettings = () => {
           <LiveImage src={checkbox} alt="checkbox" />
         </LiveContainer2>
       </LiveContainer>
-      <Underline />
+      <Underline /> */}
 
-      {isModalOpen && (
+      {/* {isModalOpen && (
         <RespondentModal isOpen={isModalOpen} onClose={handleModalClose} />
-      )}
+      )} */}
     </Container>
   );
 };
@@ -214,30 +214,30 @@ const GenderButton2 = styled.button`
   color: ${(props) => (props.isActive ? "#019A13" : "#cecece")};
 `;
 
-const LiveContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  margin-left: 50px;
-  margin-top: 10px;
-`;
+// const LiveContainer = styled.div`
+//   display: flex;
+//   flex-direction: row;
+//   margin-left: 50px;
+//   margin-top: 10px;
+// `;
 
-const LiveContainer2 = styled.div`
-  display: flex;
-  height: ${(props) => props.height}px;
-  flex-direction: row;
-  margin-left: 710px;
-  cursor: pointer;
-`;
+// const LiveContainer2 = styled.div`
+//   display: flex;
+//   height: ${(props) => props.height}px;
+//   flex-direction: row;
+//   margin-left: 710px;
+//   cursor: pointer;
+// `;
 
-const LiveText = styled.p`
-  font-size: 25px;
-  font-weight: 700;
-  color: #06070c;
-`;
+// const LiveText = styled.p`
+//   font-size: 25px;
+//   font-weight: 700;
+//   color: #06070c;
+// `;
 
-const LiveImage = styled.img`
-  width: 21px;
-  height: 24px;
-  margin-left: 10px;
-  margin-top: 25px;
-`;
+// const LiveImage = styled.img`
+//   width: 21px;
+//   height: 24px;
+//   margin-left: 10px;
+//   margin-top: 25px;
+// `;
