@@ -23,7 +23,26 @@ export const EditSurvey = () => {
 
   const handleSettingsClick = () => {
     setIsEditing(false);
-    navigate("/mySurveysPage"); // 설정 페이지로 이동
+    navigate("/settingSurvey");
+  };
+
+  const handleAddQuestion = () => {
+    const newQuestion = {
+      id: questions.length + 1,
+      question: "",
+      options: ["응답 1", "응답 2"],
+    };
+    setQuestions((prev) => [...prev, newQuestion]);
+  };
+
+  const handleRemoveQuestion = () => {
+    if (questions.length > 0) {
+      setQuestions((prev) => prev.slice(0, -1));
+    }
+  };
+
+  const handleArrowButtonClick = () => {
+    navigate("/settingSurvey");
   };
 
   return (
@@ -43,13 +62,13 @@ export const EditSurvey = () => {
         <SurveyObjective />
         <QuestionList questions={questions} setQuestions={setQuestions} />
         <ButtonContainer2>
-          <DecreaseButton>
+          <DecreaseButton onClick={handleRemoveQuestion}>
             <DecreaseText>질문 -</DecreaseText>
           </DecreaseButton>
-          <IncreaseButton>
+          <IncreaseButton onClick={handleAddQuestion}>
             <IncreaseText>질문 +</IncreaseText>
           </IncreaseButton>
-          <ArrowButton>
+          <ArrowButton onClick={handleArrowButtonClick}>
             <ArrowButtonImage src={arrowbtn} alt="설정 페이지" />
           </ArrowButton>
         </ButtonContainer2>
@@ -89,6 +108,7 @@ const EditButton = styled.button`
   font-size: 28px;
   font-weight: 700;
   color: ${(props) => (props.isActive ? "#FFFFFF" : "#06070C")};
+  cursor: pointer;
 `;
 
 const SetButton = styled.button`
@@ -100,6 +120,7 @@ const SetButton = styled.button`
   font-size: 28px;
   font-weight: 700;
   color: ${(props) => (props.isActive ? "#FFFFFF" : "#06070C")};
+  cursor: pointer;
 `;
 
 const SurveyContainer = styled.div`
