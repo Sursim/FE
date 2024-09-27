@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const SurveyData = [
   {
     id: 1,
-    title: "네이버 웹툰 사용자 조사",
+    title: "가짜 뉴스 인식 조사",
     date: "24/04/23",
     state: "마감",
   },
@@ -70,7 +70,7 @@ export const CreatedSurveys = () => {
             <CardContainer>
               <TitleContainer>
                 <SurveyTitle>{survey.title}</SurveyTitle>
-                <ResponseButton onClick={() => navigate("/mySurveysPage")}>
+                <ResponseButton onClick={() => navigate("/responseSurvey")}>
                   응답보기
                 </ResponseButton>
               </TitleContainer>
