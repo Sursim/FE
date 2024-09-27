@@ -2,14 +2,21 @@ import React from "react";
 import styled from "styled-components";
 import sursim from "../../../assets/images/sursim.png";
 import banner from "../../../assets/images/logos/BannerLogo.png";
+import { useNavigate } from "react-router-dom";
 
 export const HomeBanner = () => {
+  const navigate = useNavigate();
+
+  const handleSetClick = () => {
+    navigate("/editSurvey");
+  };
+
   return (
     <Container>
       <LeftWrapper>
         <Logo src={sursim} alt="sursim 로고" />
         <Title>모든 설문을 쉽고 간편하게</Title>
-        <Button>설문조사 만들기</Button>
+        <Button onClick={handleSetClick}>설문조사 만들기</Button>
       </LeftWrapper>
       <RightWrapper>
         <BannerImage src={banner} alt="배너 이미지" />
