@@ -7,6 +7,12 @@ export const Information = () => {
   const handleOptionChange = (value) => {
     setSelectedOption(value);
   };
+
+  const collectionPurpose = "대학과제"; // [조사의 목적]
+  const collectedData = "연락처, 연령"; // [수집 정보 예: 연령, 성별, 직업 등]
+  const retentionPeriod = "3년"; // [보유 기간 예: 1년]
+  const contactInfo = "010-2027-8074"; // [연구자 연락처 혹은 연구 기관 연락처]
+
   return (
     <Container>
       <TitleContainer>
@@ -19,27 +25,26 @@ export const Information = () => {
       <Subtitle>정보 이용 동의서</Subtitle>
       <DescriptionContainer>
         <DescriptionText>
-          본 설문조사는 <BoldText>[조사의 목적]</BoldText>을 위해 실시됩니다.
-          귀하의 응답은 연구 목적으로만 사용되며, 개인정보는 철저히 보호됩니다.
+          본 설문조사는 <BoldText>{collectionPurpose}</BoldText>을 위해
+          실시됩니다. 귀하의 응답은 연구 목적으로만 사용되며, 개인정보는 철저히
+          보호됩니다.
           <br />
           수집하는 정보의 내용: 본 조사에서는{" "}
-          <BoldText>[수집 정보 예: 연령, 성별, 직업 등]</BoldText>에 관한 정보를
-          수집합니다.
+          <BoldText>{collectedData}</BoldText>에 관한 정보를 수집합니다.
           <br />
           정보의 이용 목적: 귀하의 정보는 연구 분석과 결과를 보고서 작성에
           사용됩니다. 모든 응답은 익명으로 처리되며, 구체적인 개인을 식별할 수
           없는 형태로만 결과가 공개됩니다.
           <br />
           정보의 보유 및 이용 기간: 조사 종료 후{" "}
-          <BoldText>[보유 기간 예: 1년]</BoldText> 동안 보유하며, 이후 안전하게
+          <BoldText>{retentionPeriod}</BoldText> 동안 보유하며, 이후 안전하게
           파기합니다.
           <br />
           동의 철회 권리: 귀하는 언제든지 연구 참여를 철회할 수 있으며, 이 경우
           수집된 정보는 연구에 제어되고 파기됩니다.
           <br />
           연락처: 연구에 관한 질문이 있을 경우,{" "}
-          <BoldText>[연구자 연락처 혹은 연구 기관 연락처]</BoldText>로 연락
-          주시기 바랍니다.
+          <BoldText>{contactInfo}</BoldText>로 연락 주시기 바랍니다.
           <br />본 동의서의 내용을 충분히 이해하였으며, 이에 동의하십니까?
         </DescriptionText>
       </DescriptionContainer>
