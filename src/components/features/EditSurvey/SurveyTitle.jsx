@@ -1,11 +1,19 @@
 import React from "react";
 import styled from "styled-components";
 
-export const SurveyTitle = () => {
+export const SurveyTitle = ({ title, setTitle }) => {
+  const handleChange = (event) => {
+    setTitle(event.target.value);
+  };
+
   return (
     <Container>
       <Title>제목</Title>
-      <Input placeholder="제목을 작성해주세요." />
+      <Input
+        placeholder="제목을 작성해주세요."
+        value={title}
+        onChange={handleChange}
+      />
     </Container>
   );
 };
