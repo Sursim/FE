@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Header } from "../Layout/Header";
 import { Footer } from "../Layout/Footer";
 import { BasicSettings } from "./BasicSettings";
@@ -9,7 +10,15 @@ import { RewardsSettings } from "./RewardSettings";
 
 export const SettingSurvey = () => {
   const [isEditing, setIsEditing] = useState(true);
+  const [startDate, setStartDate] = useState(new Date());
+  const [dueDate, setDueDate] = useState(new Date());
+  const [publicAccess, setPublicAccess] = useState("SHARED");
+  const [rewardType, setRewardType] = useState("NO_REWARD");
+  const [rewardCount, setRewardCount] = useState(0);
+  const [rewardImage, setRewardImage] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { title, questions } = location.state || { title: "", questions: [] };
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -19,6 +28,72 @@ export const SettingSurvey = () => {
   const handleSettingsClick = () => {
     setIsEditing(false);
     navigate("/settingSurvey");
+  };
+
+  const handleSurveySubmit = async () => {
+    const questionList = questions.map((question) => {
+      return {
+        text: question.question, // 질문 텍스트
+        question_type: question.type, // 질문 타입 추가
+        options: question.options || [], // 선택지가 있을 경우 추가
+      };
+    });
+
+    const formData = new FormData();
+
+    formData.append("title", title);
+    formData.append("start_date", startDate.toISOString().split("T")[0]);
+    formData.append("due_date", dueDate.toISOString().split("T")[0]);
+    formData.append("public_access", publicAccess);
+    formData.append("question_list", JSON.stringify(questionList));
+    formData.append("reward_type", rewardType);
+    formData.append("reward_count", rewardCount);
+
+    // 리워드 이미지가 있다면 FormData에 추가
+    if (rewardImage) {
+      formData.append("reward_image", rewardImage);
+    }
+
+    try {
+      // 설문 데이터와 리워드 이미지 전송
+      const response = await axios.post(
+        "http://13.125.238.177:8080/api/surveys",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data", // FormData를 사용할 때는 이 헤더를 설정
+          },
+        }
+      );
+
+      // const surveyData = {
+      //   title: title,
+      //   start_date: startDate.toISOString().split("T")[0], // ISO 형식으로 변환하여 날짜 설정
+      //   due_date: dueDate.toISOString().split("T")[0],
+      //   public_access: publicAccess,
+      //   question_list: questionList,
+      //   reward_type: rewardType,
+      //   reward_count: rewardCount,
+      //   reward_image: formData.append("survey", JSON.stringify(rewardImage)),
+      // };
+
+      // try {
+      //   const response = await axios.post(
+      //     "http://13.125.238.177:8080/api/surveys",
+      //     surveyData,
+      //     {
+      //       headers: {
+      //         "Content-Type": "application/json",
+      //       },
+      //     }
+      //   );
+
+      console.log("Survey created successfully", response.data);
+      alert("설문 등록이 완료되었습니다.");
+      navigate("/home");
+    } catch (error) {
+      console.error("Error creating survey:", error);
+    }
   };
 
   return (
@@ -34,10 +109,18 @@ export const SettingSurvey = () => {
         </SetButton>
       </ButtonContainer>
       <SurveyContainer>
-        <BasicSettings />
+        <BasicSettings
+          setStartDate={setStartDate}
+          setDueDate={setDueDate}
+          setPublicAccess={setPublicAccess}
+        />
         <RespondentSettings />
-        <RewardsSettings />
-        <SurveyButton>설문 등록하기</SurveyButton>
+        <RewardsSettings
+          setRewardType={setRewardType}
+          setRewardCount={setRewardCount}
+          setRewardImage={setRewardImage}
+        />
+        <SurveyButton onClick={handleSurveySubmit}>설문 등록하기</SurveyButton>
       </SurveyContainer>
       <Footer />
     </Container>
