@@ -15,6 +15,18 @@ export const Checkbox = ({ question = { options: [] }, setQuestions }) => {
     );
   };
 
+  const handleOptionChange = (index, value) => {
+    const updatedOptions = options.map((option, i) =>
+      i === index ? value : option
+    );
+    setOptions(updatedOptions);
+    setQuestions((prev) =>
+      prev.map((q) =>
+        q.id === question.id ? { ...q, options: updatedOptions } : q
+      )
+    );
+  };
+
   const handleDeleteOption = (index) => {
     setOptions((prev) => prev.filter((_, i) => i !== index));
   };
@@ -24,8 +36,8 @@ export const Checkbox = ({ question = { options: [] }, setQuestions }) => {
     setOptions((prev) => [...prev, newOption]);
   };
   return (
-    <Container>
-      <DescriptionContainer height={options.length * 50 + 150}>
+    <Container height={options.length * 50 + 150}>
+      <DescriptionContainer>
         <Input
           type="text"
           placeholder="질문을 작성해주세요."
@@ -35,7 +47,11 @@ export const Checkbox = ({ question = { options: [] }, setQuestions }) => {
         {options.map((option, index) => (
           <OptionContainer key={index}>
             <OptionImage src={circle} alt="응답" />
-            <OptionText>{option}</OptionText>{" "}
+            <OptionInput
+              type="text"
+              placeholder={option}
+              onChange={(e) => handleOptionChange(index, e.target.value)}
+            />
             <DeleteOptionButton onClick={() => handleDeleteOption(index)}>
               <DeleteButtonImage src={deletebtn} alt="응답 삭제" />
             </DeleteOptionButton>
@@ -54,7 +70,7 @@ const Container = styled.div`
   flex-direction: column;
   margin-left: 80px;
   width: 830px;
-  height: 250px;
+  height: ${(props) => props.height}px;
   border-radius: 30px;
   border: 1px solid #cecece;
   background-color: #ffffff;
@@ -62,7 +78,6 @@ const Container = styled.div`
 
 const DescriptionContainer = styled.div`
   width: 100%
-  height: ${(props) => props.height}px;
   margin-top: 10px;
   margin-left: 30px;
   background-color: #ffffff;
@@ -92,27 +107,39 @@ const OptionContainer = styled.div`
 `;
 
 const OptionImage = styled.img`
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
 `;
 
-const OptionText = styled.p`
-  font-size: 20px;
-  font-weight: 700;
-  color: #c5c5c5;
-  margin-top: 0px;
+const OptionInput = styled.input`
+  width: 150px;
+  margin-bottom: 20px;
+  margin-top: -10px;
+  margin-left: 20px;
+  border: none;
+  border-bottom: 1px solid #cecece;
+  padding: 10px 0;
+  &:placeholder {
+    font-size: 17px;
+    font-weight: 400;
+    color: #c5c5c5;
+  }
+  &:focus {
+    outline: none;
+    border-bottom: 1px solid #019a13;
+  }
 `;
 
 const DeleteOptionButton = styled.button`
-  margin-left: 325px;
+  margin-left: 50px;
   border: none;
   background-color: #ffffff;
   cursor: pointer;
 `;
 
 const DeleteButtonImage = styled.img`
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
 `;
 
 const AddOptionButton = styled.button`
@@ -124,6 +151,6 @@ const AddOptionButton = styled.button`
 `;
 
 const AddButtonImage = styled.img`
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
 `;
