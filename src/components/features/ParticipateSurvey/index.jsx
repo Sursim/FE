@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import { Header } from "../Layout/Header";
 import { Footer } from "../Layout/Footer";
 import rewardbtn from "../../../assets/images/buttons/rewardbtn.png";
@@ -8,6 +9,7 @@ import { Survey } from "./Survey";
 
 export const ParticipateSurvey = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleRewardButtonClick = () => {
     setIsModalOpen(true);
@@ -15,6 +17,11 @@ export const ParticipateSurvey = () => {
 
   const handleModalClose = () => {
     setIsModalOpen(false);
+  };
+
+  const handleSubmit = () => {
+    alert("설문 제출이 완료되었습니다.");
+    navigate("/home");
   };
 
   return (
@@ -36,7 +43,7 @@ export const ParticipateSurvey = () => {
           <DownImage src={rewardbtn} alt="reward" />
         </RewardButton>
         <Survey />
-        <SubmitButton>설문 제출하기</SubmitButton>
+        <SubmitButton onClick={handleSubmit}>설문 제출하기</SubmitButton>
       </UpContainer>
       <Footer />
       {isModalOpen && (

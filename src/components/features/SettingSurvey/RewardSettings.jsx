@@ -2,15 +2,37 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import uploadbtn from "../../../assets/images/buttons/uploadbtn.png";
 
-export const RewardsSettings = () => {
+export const RewardsSettings = ({
+  setRewardType,
+  setRewardCount,
+  setRewardImage,
+}) => {
   const [activeRewardType, setActiveRewardType] = useState(null);
+  const [rewardCount, setRewardCountState] = useState(0);
+  const [rewardImage, setRewardImageState] = useState("000.jpg");
 
   const handleButtonClick = () => {
     setActiveRewardType("random");
+    setRewardType("RANDOM");
   };
 
   const handleButtonClick2 = () => {
     setActiveRewardType("firstCome");
+    setRewardType("SEQUENTIAL");
+  };
+
+  const handleRewardCountChange = (event) => {
+    const count = event.target.value;
+    setRewardCountState(count);
+    setRewardCount(count); // 부모 컴포넌트로 리워드 갯수 전달
+  };
+
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setRewardImageState(file.name); // 파일 이름 저장
+      setRewardImage(file); // 부모 컴포넌트로 리워드 이미지 전달
+    }
   };
 
   return (
@@ -25,13 +47,27 @@ export const RewardsSettings = () => {
       <Underline1 />
       <ImageContainer>
         <Text>추가 리워드 사진</Text>
-        <Image src={uploadbtn} alt="리워드 사진" />
-        <ImageText>000.jpg</ImageText>
+        <input
+          type="file"
+          onChange={handleImageChange}
+          style={{ display: "none" }}
+          id="file-input"
+        />
+        <Image
+          src={uploadbtn}
+          alt="리워드 사진"
+          onClick={() => document.getElementById("file-input").click()}
+        />
+        <ImageText>{rewardImage}</ImageText>
       </ImageContainer>
       <Underline />
       <CountContainer>
         <Text>추가 리워드 갯수</Text>
-        <CountInput />
+        <CountInput
+          type="text"
+          value={rewardCount}
+          onChange={handleRewardCountChange}
+        />
         <CountText>개</CountText>
       </CountContainer>
       <Underline2 />

@@ -40,7 +40,7 @@ const UpContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: 1100px;
-  height: 1400px;
+  height: 1950px;
   display: flex;
   flex-direction: column;
   margin-top: 150px;
