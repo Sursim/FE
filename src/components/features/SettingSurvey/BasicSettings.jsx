@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 import styled from "styled-components";
 import calendar from "../../../assets/images/calendar.png";
 
-export const BasicSettings = () => {
+export const BasicSettings = ({
+  setStartDate,
+  setDueDate,
+  setPublicAccess,
+}) => {
   const [date, setDate] = useState([new Date(), new Date()]);
   const [isCalendarOpen, setCalendarOpen] = useState(false);
   const [activeResult, setActiveResult] = useState(null);
@@ -14,15 +19,33 @@ export const BasicSettings = () => {
 
   const handleDateChange = (newDate) => {
     setDate(newDate);
+    setStartDate(newDate[0]);
+    setDueDate(newDate[1]);
+    updateDateInput(newDate);
     setCalendarOpen(false);
   };
 
+  const updateDateInput = (newDate) => {
+    const startFormatted = formatDate(newDate[0]);
+    const dueFormatted = formatDate(newDate[1]);
+    setDateInput(`${startFormatted} ~ ${dueFormatted}`);
+  };
+
+  const formatDate = (date) => {
+    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+    return date.toLocaleDateString("ko-KR", options);
+  };
+
+  const [dateInput, setDateInput] = useState("00년 00월 00일 ~ 00년 00월 00일");
+
   const handleButtonClick = () => {
     setActiveResult("nonactive");
+    setPublicAccess("PRIVATE");
   };
 
   const handleButtonClick2 = () => {
     setActiveResult("active");
+    setPublicAccess("SHARED");
   };
 
   return (
@@ -33,14 +56,15 @@ export const BasicSettings = () => {
       <DateContainer>
         <Text>응답 기한</Text>
         <DateImage src={calendar} alt="달력" onClick={handleDateImageClick} />
-        <DateInput placeholder="00년 00월 00일 ~ 00년 00월 00일" />
+        <DateInput value={dateInput} readOnly />
         {isCalendarOpen && (
-          <Calendar
-            onChange={handleDateChange}
-            value={date}
-            selectRange={true}
-            style={{ position: "absolute", zIndex: 1 }}
-          />
+          <CalendarContainer>
+            <Calendar
+              onChange={handleDateChange}
+              value={date}
+              selectRange={true}
+            />
+          </CalendarContainer>
         )}
       </DateContainer>
       <Underline />
@@ -123,14 +147,12 @@ const DateInput = styled.input`
   width: 400px;
   height: 30px;
   border: none;
-  margin-left: 460px;
+  margin-left: 490px;
   margin-top: 28px;
   background-color: #ffffff;
-  &::placeholder {
-    font-size: 25px;
-    font-weight: 700;
-    color: #cecece;
-  }
+  font-size: 25px;
+  font-weight: 700;
+  color: #cecece;
   &:focus {
     outline: none;
     border-bottom: 1px solid #019a13;
@@ -224,4 +246,11 @@ const TimeText = styled.p`
   font-weight: 700;
   color: #06070c;
   margin-left: 5px;
+`;
+
+const CalendarContainer = styled.div`
+  position: absolute;
+  top: 480px;
+  left: 250px;
+  z-index: 10;
 `;
