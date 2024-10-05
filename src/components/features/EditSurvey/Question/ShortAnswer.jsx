@@ -18,12 +18,7 @@ export const ShortAnswer = ({ question = { options: [] }, setQuestions }) => {
         value={question.question}
         onChange={handleQuestionChange}
       />
-      <InputAnswer
-        text="text"
-        placeholder=""
-        value={question.question}
-        onChange={handleQuestionChange}
-      />
+      <InputAnswer text="text" />
     </Container>
   );
 };
