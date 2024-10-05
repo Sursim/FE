@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-import survey from "../../../assets/images/survey.png";
 
 export const Survey = () => {
+  const [selectedOption, setSelectedOption] = useState("");
+
+  const handleButtonClick = (value) => {
+    setSelectedOption(value);
+  };
+
   return (
     <Container>
       <QuestionContainer>
@@ -20,7 +25,23 @@ export const Survey = () => {
         <Box>
           <QuestionTitle>당신은 가짜 뉴스를 믿습니까?</QuestionTitle>
           <Underline />
-          <Image src={survey} alt="survey" />
+          <MainContainer>
+            {[
+              "전혀 그렇지 않다",
+              "그렇지 않다",
+              "보통이다",
+              "그렇다",
+              "매우 그렇다",
+            ].map((label, index) => (
+              <ButtonContainer
+                key={index}
+                onClick={() => handleButtonClick(label)}
+              >
+                <CircleButton selected={selectedOption === label} />
+                <Text2>{label}</Text2>
+              </ButtonContainer>
+            ))}
+          </MainContainer>
         </Box>
       </QuestionContainer>
       <QuestionContainer>
@@ -110,13 +131,6 @@ const Input = styled.input`
   }
 `;
 
-const Image = styled.img`
-  width: 800px;
-  height: 90px;
-  margin-left: 70px;
-  margin-top: 40px;
-`;
-
 const Input2 = styled.input`
   width: 132px;
   height: 50px;
@@ -155,4 +169,35 @@ const InputContainer = styled.div`
   flex-direction: row;
   margin-left: 30px;
   margin-top: 20px;
+`;
+
+const MainContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  margin-top: 60px;
+  margin-left: 180px;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  width: 100px;
+`;
+
+const CircleButton = styled.div`
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid ${({ selected }) => (selected ? "#019a13" : "#383838")};
+  background-color: ${({ selected }) => (selected ? "#019a13" : "transparent")};
+`;
+
+const Text2 = styled.span`
+  margin-top: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #383838;
 `;
