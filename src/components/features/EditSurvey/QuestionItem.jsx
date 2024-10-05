@@ -1,72 +1,186 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
+import axios from "axios";
 import AI from "../../../assets/images/buttons/ai.png";
-import checkbox from "../../../assets/images/checkbox/checkbox.png";
-import circle from "../../../assets/images/circle.png";
-import addbtn from "../../../assets/images/buttons/addbtn.png";
-import { CheckboxModal } from "../../common/Modal/CheckboxModal";
+import { AiResponseModal } from "../../common/Modal/AiResponseModal";
+import { Checkbox } from "./Question/Checkbox";
+import { LongAnswer } from "./Question/LongAnswer";
+import { ShortAnswer } from "./Question/ShortAnswer";
+import { Number } from "./Question/Number";
+import { Information } from "./Question/Information";
+import { MeaningDistinctionScale } from "./Question/MeaningDistinctionScale";
+import { LikertScale } from "./Question/ LikertScale";
+import modal1 from "../../../assets/images/checkbox/modal1.png";
+import modal2 from "../../../assets/images/checkbox/modal2.png";
+import modal3 from "../../../assets/images/checkbox/modal3.png";
+import modal4 from "../../../assets/images/checkbox/modal4.png";
+import modal5 from "../../../assets/images/checkbox/modal5.png";
+import modal6 from "../../../assets/images/checkbox/modal6.png";
+import modal7 from "../../../assets/images/checkbox/modal7.png";
+import modal8 from "../../../assets/images/checkbox/modal8.png";
+import modal9 from "../../../assets/images/checkbox/modal9.png";
 
-export const QuestionItem = ({ question, setQuestions }) => {
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [options, setOptions] = useState([...question.options]);
-  const checkboxContainerRef = useRef(null);
+export const QuestionItem = ({ question = { options: [] }, setQuestions }) => {
+  const [selectedType, setSelectedType] = useState("체크박스");
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [aiResponse, setAiResponse] = useState("");
+  const dropdownRef = useRef(null);
 
-  const handleOpenModal = () => {
-    setModalOpen(true);
+  const handleDropdownToggle = () => {
+    setDropdownOpen((prev) => !prev);
   };
 
-  const handleCloseModal = () => {
-    setModalOpen(false);
+  const handleDropdownSelect = (type) => {
+    const updatedQuestion = { ...question, question_type: type };
+    setSelectedType(type);
+    handleQuestionChange(updatedQuestion);
+    setDropdownOpen(false);
   };
 
-  const handleQuestionChange = (e) => {
-    setQuestions((prev) =>
-      prev.map((q) =>
-        q.id === question.id ? { ...q, question: e.target.value } : q
+  const handleQuestionChange = (updatedQuestion) => {
+    setQuestions((prevQuestions) =>
+      prevQuestions.map((q) =>
+        q.id === updatedQuestion.id ? updatedQuestion : q
       )
     );
   };
 
-  const handleAddOption = () => {
-    const newOption = `응답 ${options.length + 1}`;
-    setOptions((prev) => [...prev, newOption]);
+  const renderComponent = () => {
+    switch (selectedType) {
+      case "체크박스":
+        return <Checkbox question={question} setQuestions={setQuestions} />;
+      case "객관식":
+        return <Checkbox question={question} setQuestions={setQuestions} />;
+      case "장문형":
+        return <LongAnswer question={question} setQuestions={setQuestions} />;
+      case "단답형":
+        return <ShortAnswer question={question} setQuestions={setQuestions} />;
+      case "숫자 응답":
+        return <ShortAnswer question={question} setQuestions={setQuestions} />;
+      case "전화번호":
+        return <Number question={question} setQuestions={setQuestions} />;
+      case "정보 이용 동의":
+        return <Information question={question} setQuestions={setQuestions} />;
+      case "의미 분별 척도":
+        return (
+          <MeaningDistinctionScale
+            question={question}
+            setQuestions={setQuestions}
+          />
+        );
+      case "리커트 척도":
+        return <LikertScale question={question} setQuestions={setQuestions} />;
+      default:
+        return <Checkbox question={question} setQuestions={setQuestions} />;
+    }
+  };
+
+  const QUESTION_TYPE_TIMES = {
+    CHECK_CHOICE: 1, // 체크박스
+    SEMANTIC_RATINGS: 2, // 의미분별척도
+    LIKERT_SCORES: 2, // 리커트척도
+    MULTIPLE_CHOICE: 1, // 객관식
+    NUMERIC_RESPONSE: 1, // 숫자응답
+    PHONE_NUMBER: 1, // 전화번호
+    SUBJECTIVE: 3, // 주관식
+    DESCRIPTIVE: 5, // 서술형
+  };
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleAIButtonClick = async () => {
+    const requestData = {
+      survey_title: question.survey_title,
+      text: question.text,
+      question_type: selectedType,
+      response_time: QUESTION_TYPE_TIMES[selectedType],
+    };
+
+    // if (selectedType === "의미 분별 척도") {
+    //   requestData.semantic_option = {
+    //     left_end: question.semantic_option.left_end,
+    //     right_end: question.semantic_option.right_end,
+    //   };
+    // } else if (selectedType === "체크박스" || selectedType === "객관식") {
+    //   requestData.options = question.options;
+    // }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/prompt",
+        requestData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setAiResponse(response.data);
+      console.log(response.data);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("Error fetching AI response:", error);
+    }
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
     <Container>
       <TitleContainer>
         <Title>질문 {question.id}</Title>
-        <AIButton>
+        <AIButton onClick={handleAIButtonClick}>
           <AIImage src={AI} alt="AI봇" />
         </AIButton>
-        <CheckboxContainer ref={checkboxContainerRef} onClick={handleOpenModal}>
-          <CheckboxText>체크박스</CheckboxText>
-          <CheckboxImage src={checkbox} alt="체크박스 이미지" />
-        </CheckboxContainer>
+        <DropdownContainer ref={dropdownRef} onClick={handleDropdownToggle}>
+          <DropdownText>{selectedType}</DropdownText>
+          <DropdownArrow>{isDropdownOpen ? "▲" : "▼"}</DropdownArrow>
+          {isDropdownOpen && (
+            <DropdownMenu>
+              {[
+                { label: "체크박스", icon: modal1 },
+                { label: "객관식", icon: modal2 },
+                { label: "장문형", icon: modal3 },
+                { label: "단답형", icon: modal4 },
+                { label: "숫자 응답", icon: modal5 },
+                { label: "전화번호", icon: modal6 },
+                { label: "정보 이용 동의", icon: modal7 },
+                { label: "의미 분별 척도", icon: modal8 },
+                { label: "리커트 척도", icon: modal9 },
+              ].map(({ label, icon }) => (
+                <DropdownItem
+                  key={label}
+                  onClick={() => handleDropdownSelect(label)}
+                >
+                  <ItemIcon src={icon} alt={label} />
+                  {label}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          )}
+        </DropdownContainer>
       </TitleContainer>
-      <DescriptionContainer height={options.length * 50 + 150}>
-        <Input
-          type="text"
-          placeholder="질문을 작성해주세요."
-          value={question.question}
-          onChange={handleQuestionChange}
-        />
-        {options.map((option, index) => (
-          <OptionContainer key={index}>
-            <OptionImage src={circle} alt="응답" />
-            <OptionText>{option}</OptionText>
-          </OptionContainer>
-        ))}
-        <AddOptionButton onClick={handleAddOption}>
-          <AddButtonImage src={addbtn} alt="응답 추가" />
-        </AddOptionButton>
-      </DescriptionContainer>
+      {renderComponent()}
 
       {isModalOpen && (
-        <CheckboxModal
+        <AiResponseModal
+          response={aiResponse}
           isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          anchorRef={checkboxContainerRef}
+          onClose={closeModal}
         />
       )}
     </Container>
@@ -104,85 +218,43 @@ const AIImage = styled.img`
   height: 30px;
 `;
 
-const CheckboxContainer = styled.div`
-  margin-left: 30px;
+const DropdownContainer = styled.div`
   display: flex;
-  flex-direction: row;
-  gap: 8px;
+  align-items: center;
   cursor: pointer;
+  margin-left: 10px;
 `;
 
-const CheckboxText = styled.p`
-  font-size: 24px;
-  font-weight: 700;
-  color: #000000;
+const DropdownText = styled.span`
+  font-size: 20px;
 `;
 
-const CheckboxImage = styled.img`
-  width: 21px;
-  height: 24px;
-  margin-top: 20px;
+const DropdownArrow = styled.span`
+  margin-left: 5px;
 `;
 
-const DescriptionContainer = styled.div`
-  width: 830px;
-  height: ${(props) => props.height}px;
-  margin-top: -10px;
-  margin-left: 80px;
-  background-color: #fafafa;
-  border: none;
-  border-radius: 24px;
+const DropdownMenu = styled.div`
+  position: absolute;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  z-index: 1000;
+  margin-top: 5px;
 `;
 
-const Input = styled.input`
-  width: 800px;
-  height: 10px;
-  border: none;
-  border-radius: 24px;
-  background-color: #fafafa;
-  padding-top: 50px;
-  padding-left: 30px;
-  margin-bottom: 20px;
-  &::placeholder {
-    font-size: 25px;
-    font-weight: 600;
-    color: #c5c5c5;
-    text-align: flex-start;
-  }
-  &:focus {
-    outline: none;
-    border: 1px solid #019a13;
+const DropdownItem = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 10px 10px;
+  padding-right: 30px;
+  cursor: pointer;
+  &:hover {
+    background-color: #b3e1b8;
   }
 `;
 
-const OptionContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  margin-left: 30px;
-  gap: 10px;
-`;
-
-const OptionImage = styled.img`
-  width: 30px;
-  height: 30px;
-`;
-
-const OptionText = styled.p`
-  font-size: 24px;
-  font-weight: 700;
-  color: #c5c5c5;
-  margin-top: 0px;
-`;
-
-const AddOptionButton = styled.button`
-  margin-top: 10px;
-  margin-left: 25px;
-  border: none;
-  background-color: #fafafa;
-  cursor: pointer;
-`;
-
-const AddButtonImage = styled.img`
-  width: 30px;
-  height: 30px;
+const ItemIcon = styled.img`
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
 `;
