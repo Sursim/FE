@@ -10,6 +10,7 @@ import arrowbtn from "../../../assets/images/buttons/arrowbutton.png";
 
 export const EditSurvey = () => {
   const [isEditing, setIsEditing] = useState(true);
+  const [title, setTitle] = useState("");
   const navigate = useNavigate();
   const [questions, setQuestions] = useState([
     { id: 1, question: "", options: ["응답 1", "응답 2"] },
@@ -23,7 +24,7 @@ export const EditSurvey = () => {
 
   const handleSettingsClick = () => {
     setIsEditing(false);
-    navigate("/settingSurvey");
+    navigate("/settingSurvey", { state: { title, questions } });
   };
 
   const handleAddQuestion = () => {
@@ -50,15 +51,15 @@ export const EditSurvey = () => {
       <Header />
       <Title>설문조사 만들기</Title>
       <ButtonContainer>
-        <EditButton isActive={isEditing} onClick={handleEditClick}>
+        <EditButton $isActive={isEditing} onClick={handleEditClick}>
           편집
         </EditButton>
-        <SetButton isActive={!isEditing} onClick={handleSettingsClick}>
+        <SetButton $isActive={!isEditing} onClick={handleSettingsClick}>
           설정
         </SetButton>
       </ButtonContainer>
       <SurveyContainer>
-        <SurveyTitle />
+        <SurveyTitle title={title} setTitle={setTitle} />
         <SurveyObjective />
         <QuestionList questions={questions} setQuestions={setQuestions} />
         <ButtonContainer2>
@@ -103,11 +104,11 @@ const EditButton = styled.button`
   width: 160px;
   height: 55px;
   border-radius: 60px;
-  background-color: ${(props) => (props.isActive ? "#06070C" : "#FFFFFF")};
+  background-color: ${(props) => (props.$isActive ? "#06070C" : "#FFFFFF")};
   text-align: center;
   font-size: 28px;
   font-weight: 700;
-  color: ${(props) => (props.isActive ? "#FFFFFF" : "#06070C")};
+  color: ${(props) => (props.$isActive ? "#FFFFFF" : "#06070C")};
   cursor: pointer;
 `;
 
@@ -115,11 +116,11 @@ const SetButton = styled.button`
   width: 160px;
   height: 55px;
   border-radius: 60px;
-  background-color: ${(props) => (props.isActive ? "#06070C" : "#FFFFFF")};
+  background-color: ${(props) => (props.$isActive ? "#06070C" : "#FFFFFF")};
   text-align: center;
   font-size: 28px;
   font-weight: 700;
-  color: ${(props) => (props.isActive ? "#FFFFFF" : "#06070C")};
+  color: ${(props) => (props.$isActive ? "#FFFFFF" : "#06070C")};
   cursor: pointer;
 `;
 
