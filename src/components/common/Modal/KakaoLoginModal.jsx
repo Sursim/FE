@@ -1,40 +1,75 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../routes/AuthProvider";
 import styled from "styled-components";
 import clearbtn from "../../../assets/images/buttons/clearbtn.png";
 
-export const KakaoLoginModal = () => {
+export const KakaoLoginModal = ({ accessToken }) => {
   const [birthDate, setBirthDate] = useState("");
   const [gender, setGender] = useState("");
-  //   const [region, setRegion] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const navigate = useNavigate();
+  const { login, setUser } = useAuth();
 
   const handleSignUp = async () => {
+    if (!gender) {
+      alert("성별을 선택해주세요.");
+      return;
+    }
+
+    if (!/^\d{8}$/.test(birthDate)) {
+      alert("생년월일은 8자리 숫자로 입력해야 합니다. 형식: YYYYMMDD");
+      return;
+    }
+
+    if (!/^\d{11}$/.test(phoneNumber)) {
+      alert("전화번호는 11자리 숫자로만 입력해야 합니다.");
+      return;
+    }
+
+    const formattedBirthDate = `${birthDate.slice(0, 4)}-${birthDate.slice(
+      4,
+      6
+    )}-${birthDate.slice(6, 8)}`;
+
     const payload = {
-      birth_date: birthDate,
+      birth_date: formattedBirthDate,
       gender: gender,
-      //   region: region,
+      phone_number: phoneNumber,
+      access_token: accessToken,
     };
+
+    console.log("전송할 payload:", payload);
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/auth/kakao-first-login",
+        "/api/auth/kakao-first-login",
         payload,
         {
           headers: {
             "Content-Type": "application/json",
           },
+          withCredentials: true, // 쿠키와 같은 인증 정보를 서버로 전송
         }
       );
 
-      console.log("회원가입 성공:", response.data);
+      alert("회원가입이 완료되었습니다.");
+      setUser({
+        name: response.data.name,
+        email: response.data.email,
+        gender: gender,
+        birth_date: formattedBirthDate,
+        phone_number: phoneNumber,
+      });
+      login();
       navigate("/home");
     } catch (error) {
       console.error(
         "회원가입 실패:",
         error.response ? error.response.data : error.message
       );
+      alert("회원가입에 실패했습니다.");
     }
   };
 
@@ -50,8 +85,8 @@ export const KakaoLoginModal = () => {
         <InputContainer>
           <InputText>성별</InputText>
           <Select value={gender} onChange={(e) => setGender(e.target.value)}>
-            <option value="">남</option>
-            <option value="female">여</option>
+            <option value="남성">남성</option>
+            <option value="여성">여성</option>
           </Select>
         </InputContainer>
         <InputContainer>
@@ -65,32 +100,14 @@ export const KakaoLoginModal = () => {
         <InputContainer>
           <InputText>전화번호</InputText>
           <NumberContainer>
-            <Input placeholder="휴대전화 번호 입력" />
+            <Input
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              placeholder="숫자만 입력하세요. EX)01012345678"
+            />
             <NumberButton>인증</NumberButton>
           </NumberContainer>
         </InputContainer>
-        {/* <InputContainer>
-          <InputText>지역</InputText>
-          <Select value={region} onChange={(e) => setRegion(e.target.value)}>
-            <option value="">서울특별시</option>
-            <option value="region1">부산광역시</option>
-            <option value="region2">대구광역시</option>
-            <option value="region3">인천광역시</option>
-            <option value="region4">광주광역시</option>
-            <option value="region5">대전광역시</option>
-            <option value="region6">울산광역시</option>
-            <option value="region7">세종 특별 자치시</option>
-            <option value="region8">경기도</option>
-            <option value="region9">강원도</option>
-            <option value="region10">충청북도</option>
-            <option value="region11">충청남도</option>
-            <option value="region12">전라북도</option>
-            <option value="region13">전라남도</option>
-            <option value="region14">경상북도</option>
-            <option value="region15">경상남도</option>
-            <option value="region16">제주 특별 자치도</option>
-          </Select>
-        </InputContainer> */}
         <KakaoLoginButton onClick={handleSignUp}>
           회원가입 하기
         </KakaoLoginButton>
@@ -196,7 +213,7 @@ const Input = styled.input`
   border: none;
   border-bottom: 1px solid #c5c5c5;
   padding: 10px 0;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
   color: #06070c;
   &::placeholder {

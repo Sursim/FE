@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import clearbtn from "../../../assets/images/buttons/clearbtn.png";
 import sursim from "../../../assets/images/sursim.png";
-import password from "../../../assets/icons/password.png";
+import Password from "../../../assets/icons/password.png";
 import kakao from "../../../assets/icons/kakao.png";
 import { RegisterModal } from "./RegisterModal";
 import { KakaoLoginModal } from "./KakaoLoginModal";
@@ -11,16 +12,35 @@ import { KakaoLoginModal } from "./KakaoLoginModal";
 export const LoginModal = ({ isOpen, onClose }) => {
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [isKakaoLoginModalOpen, setIsKakaoLoginModalOpen] = useState(false);
-
-  useEffect(() => {
-    if (window.Kakao && !window.Kakao.isInitialized()) {
-      window.Kakao.init("afbd1f55b52798b8aebb6aeb679e3259");
-    } else {
-      console.error("카카오 SDK가 로드되지 않았거나 이미 초기화되었습니다.");
-    }
-  }, []);
+  const [kakaoAccessToken, setKakaoAccessToken] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   if (!isOpen) return null;
+
+  const handleLogin = async () => {
+    const payload = {
+      email: email,
+      password: password,
+    };
+
+    try {
+      const response = await axios.post("/api/auth/login", payload, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log("회원가입 성공:", response.data);
+      navigate("/home");
+    } catch (error) {
+      console.error(
+        "회원가입 실패:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
 
   const handleKakaoLogin = () => {
     window.Kakao.Auth.login({
@@ -28,7 +48,7 @@ export const LoginModal = ({ isOpen, onClose }) => {
         const accessToken = authObj.access_token;
         console.log("액세스 토큰:", accessToken);
 
-        const baseURL = "http://13.125.238.177:8080/api/auth/login/kakao";
+        const baseURL = "/api/auth/login/kakao";
 
         try {
           const response = await axios.post(
@@ -40,26 +60,18 @@ export const LoginModal = ({ isOpen, onClose }) => {
               headers: {
                 "Content-Type": "application/json",
               },
+              withCredentials: true,
             }
           );
-
-          console.log("서버 응답:", response.data);
-          //   const { access_token } = response.data;
-          //   const cookie = document.cookie
-          //     .split("; ")
-          //     .find((row) => row.startsWith("Authorization="));
 
           const cookies = response.headers["set-cookie"];
 
           const access_token = cookies;
 
-          //   if (!access_token) {
-          //     throw new Error("서버에서 액세스 토큰을 가져오지 못했습니다.");
-          //   }
           console.log("서버에서 받은 액세스 토큰:", access_token);
-          //   console.log("로그인 성공:", response.data);
           if (response.data.content === "INCOMPLETE") {
             setIsKakaoLoginModalOpen(true);
+            setKakaoAccessToken(accessToken);
           }
         } catch (error) {
           console.error(
@@ -95,14 +107,22 @@ export const LoginModal = ({ isOpen, onClose }) => {
         </TitleContainer>
         <EmailContainer>
           <DescriptionTitle>이메일</DescriptionTitle>
-          <DescriptionInput placeholder="example.mail.com" />
+          <DescriptionInput
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="example.mail.com"
+          />
         </EmailContainer>
         <PasswordContainer>
           <DescriptionTitle>비밀번호</DescriptionTitle>
-          <DescriptionInput placeholder="numbers" />
-          <PasswordImage src={password} alt="password" />
+          <DescriptionInput
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="numbers"
+          />
+          <PasswordImage src={Password} alt="password" />
         </PasswordContainer>
-        <LoginButton>로그인</LoginButton>
+        <LoginButton onClick={handleLogin}>로그인</LoginButton>
         <KakaoLoginButton onClick={handleKakaoLogin}>
           <KakaoImage src={kakao} alt="kakao" />
           <KakaoLoginButtonText>카카오 로그인</KakaoLoginButtonText>
@@ -121,6 +141,7 @@ export const LoginModal = ({ isOpen, onClose }) => {
         <KakaoLoginModal
           isOpen={isKakaoLoginModalOpen}
           onClose={closeKakaoLoginModal}
+          accessToken={kakaoAccessToken}
         />
       )}
     </ModalOverlay>
