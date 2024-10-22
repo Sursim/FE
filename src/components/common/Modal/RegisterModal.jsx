@@ -1,9 +1,74 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../routes/AuthProvider";
 import clearbtn from "../../../assets/images/buttons/clearbtn.png";
 
 export const RegisterModal = ({ isOpen, onClose }) => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [gender, setGender] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const navigate = useNavigate();
+  const { login, setUser } = useAuth();
+
   if (!isOpen) return null;
+
+  const handleSignUp = async () => {
+    if (password !== confirmPassword) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
+    if (!/^\d{8}$/.test(birthDate)) {
+      alert("생년월일은 8자리 숫자로 입력해야 합니다. 형식: YYYYMMDD");
+      return;
+    }
+
+    const formattedBirthDate = `${birthDate.slice(0, 4)}-${birthDate.slice(
+      4,
+      6
+    )}-${birthDate.slice(6, 8)}`;
+
+    const genderValue = gender === "여성" ? "여성" : "남성";
+
+    const payload = {
+      name: name,
+      email: email,
+      password: password,
+      birth_date: formattedBirthDate,
+      gender: genderValue,
+      phone_number: phoneNumber,
+    };
+
+    try {
+      const response = await axios.post("/api/auth/join", payload, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
+
+      setUser({
+        name: response.data.name,
+        email: response.data.email,
+        gender: response.data.genderValue,
+        birth_date: response.data.formattedBirthDate,
+        phone_number: response.data.phoneNumber,
+      });
+      login();
+      navigate("/home");
+    } catch (error) {
+      console.error(
+        "회원가입 실패:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
 
   return (
     <ModalOverlay onClick={onClose}>
@@ -14,68 +79,76 @@ export const RegisterModal = ({ isOpen, onClose }) => {
         <Title>회원가입</Title>
         <InputContainer>
           <InputText>이름</InputText>
-          <Input placeholder="홍길동" />
+          <Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="홍길동"
+          />
         </InputContainer>
         <InputContainer>
           <InputText>이메일</InputText>
-          <Input placeholder="example.mail.com" />
+          <Input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="example.mail.com"
+          />
         </InputContainer>
         <InputContainer>
           <InputText>비밀번호</InputText>
-          <Input placeholder="numbers" />
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="numbers"
+          />
         </InputContainer>
         <InputContainer>
           <InputText>비밀번호 확인</InputText>
-          <Input placeholder="numbers" />
+          <Input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="numbers"
+          />
         </InputContainer>
         <InputContainer>
           <InputText>성별</InputText>
-          <Select>
-            <option value="">남</option>
-            <option value="female">여</option>
+          <Select value={gender} onChange={(e) => setGender(e.target.value)}>
+            <option value="남성">남성</option>
+            <option value="여성">여성</option>
           </Select>
         </InputContainer>
         <InputContainer>
           <InputText>생년월일</InputText>
-          <Input placeholder="8자리로 입력하세요. EX)19990101" />
+          <Input
+            value={birthDate}
+            onChange={(e) => setBirthDate(e.target.value)}
+            placeholder="8자리로 입력하세요. EX)19990101"
+          />
         </InputContainer>
         <InputContainer>
           <InputText>전화번호</InputText>
           <NumberContainer>
-            <Input placeholder="휴대전화 번호 입력" />
+            <Input
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              placeholder="휴대전화 번호 입력"
+            />
             <NumberButton>인증</NumberButton>
           </NumberContainer>
         </InputContainer>
         <InputContainer>
           <InputText>전화번호 인증</InputText>
           <NumberContainer>
-            <Input placeholder="인증번호 입력" />
+            <Input
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              placeholder="인증번호 입력"
+            />
             <NumberButton>재전송</NumberButton>
           </NumberContainer>
         </InputContainer>
-        {/* <InputContainer>
-          <InputText>지역</InputText>
-          <Select>
-            <option value="">서울특별시</option>
-            <option value="region1">부산광역시</option>
-            <option value="region2">대구광역시</option>
-            <option value="region3">인천광역시</option>
-            <option value="region4">광주광역시</option>
-            <option value="region5">대전광역시</option>
-            <option value="region6">울산광역시</option>
-            <option value="region7">세종 특별 자치시</option>
-            <option value="region8">경기도</option>
-            <option value="region9">강원도</option>
-            <option value="region10">충청북도</option>
-            <option value="region11">충청남도</option>
-            <option value="region12">전라북도</option>
-            <option value="region13">전라남도</option>
-            <option value="region14">경상북도</option>
-            <option value="region15">경상남도</option>
-            <option value="region16">제주 특별 자치도</option>
-          </Select>
-        </InputContainer> */}
-        <RegisterButton>회원가입 하기</RegisterButton>
+        <RegisterButton onClick={handleSignUp}>회원가입 하기</RegisterButton>
       </ModalContent>
     </ModalOverlay>
   );
