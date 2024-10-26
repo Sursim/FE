@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
-import axios from "axios";
+// import axios from "axios";
 import AI from "../../../assets/images/buttons/ai.png";
-import { AiResponseModal } from "../../common/Modal/AiResponseModal";
+import { AiMeaningModal } from "../../common/Modal/AiMeaningModal";
+import { AiLikertModal } from "../../common/Modal/AiLikertModal";
 import { Checkbox } from "./Question/Checkbox";
 import { LongAnswer } from "./Question/LongAnswer";
 import { ShortAnswer } from "./Question/ShortAnswer";
@@ -24,7 +25,8 @@ export const QuestionItem = ({ question = { options: [] }, setQuestions }) => {
   const [selectedType, setSelectedType] = useState("체크박스");
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [aiResponse, setAiResponse] = useState("");
+  const [modalType, setModalType] = useState(null);
+  // const [aiResponse, setAiResponse] = useState("");
   const dropdownRef = useRef(null);
 
   const handleDropdownToggle = () => {
@@ -76,16 +78,16 @@ export const QuestionItem = ({ question = { options: [] }, setQuestions }) => {
     }
   };
 
-  const QUESTION_TYPE_TIMES = {
-    CHECK_CHOICE: 1, // 체크박스
-    SEMANTIC_RATINGS: 2, // 의미분별척도
-    LIKERT_SCORES: 2, // 리커트척도
-    MULTIPLE_CHOICE: 1, // 객관식
-    NUMERIC_RESPONSE: 1, // 숫자응답
-    PHONE_NUMBER: 1, // 전화번호
-    SUBJECTIVE: 3, // 주관식
-    DESCRIPTIVE: 5, // 서술형
-  };
+  // const QUESTION_TYPE_TIMES = {
+  //   CHECK_CHOICE: 1, // 체크박스
+  //   SEMANTIC_RATINGS: 2, // 의미분별척도
+  //   LIKERT_SCORES: 2, // 리커트척도
+  //   MULTIPLE_CHOICE: 1, // 객관식
+  //   NUMERIC_RESPONSE: 1, // 숫자응답
+  //   PHONE_NUMBER: 1, // 전화번호
+  //   SUBJECTIVE: 3, // 주관식
+  //   DESCRIPTIVE: 5, // 서술형
+  // };
 
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -101,12 +103,12 @@ export const QuestionItem = ({ question = { options: [] }, setQuestions }) => {
   }, []);
 
   const handleAIButtonClick = async () => {
-    const requestData = {
-      survey_title: question.survey_title,
-      text: question.text,
-      question_type: selectedType,
-      response_time: QUESTION_TYPE_TIMES[selectedType],
-    };
+    // const requestData = {
+    //   survey_title: question.survey_title,
+    //   text: question.text,
+    //   question_type: selectedType,
+    //   response_time: QUESTION_TYPE_TIMES[selectedType],
+    // };
 
     // if (selectedType === "의미 분별 척도") {
     //   requestData.semantic_option = {
@@ -117,22 +119,24 @@ export const QuestionItem = ({ question = { options: [] }, setQuestions }) => {
     //   requestData.options = question.options;
     // }
 
-    try {
-      const response = await axios.post(
-        "http://localhost:8080/api/prompt",
-        requestData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      setAiResponse(response.data);
-      console.log(response.data);
-      setIsModalOpen(true);
-    } catch (error) {
-      console.error("Error fetching AI response:", error);
+    // try {
+    //   const response = await axios.post("/api/prompt", requestData, {
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   });
+    //   setAiResponse(response.data);
+    //   console.log(response.data);
+    //   setIsModalOpen(true);
+    // } catch (error) {
+    //   console.error("Error fetching AI response:", error);
+    // }
+    if (selectedType === "의미 분별 척도") {
+      setModalType("meaning");
+    } else if (selectedType === "리커트 척도") {
+      setModalType("likert");
     }
+    setIsModalOpen(true);
   };
 
   const closeModal = () => {
@@ -176,12 +180,11 @@ export const QuestionItem = ({ question = { options: [] }, setQuestions }) => {
       </TitleContainer>
       {renderComponent()}
 
-      {isModalOpen && (
-        <AiResponseModal
-          response={aiResponse}
-          isOpen={isModalOpen}
-          onClose={closeModal}
-        />
+      {isModalOpen && modalType === "meaning" && (
+        <AiMeaningModal isOpen={isModalOpen} onClose={closeModal} />
+      )}
+      {isModalOpen && modalType === "likert" && (
+        <AiLikertModal isOpen={isModalOpen} onClose={closeModal} />
       )}
     </Container>
   );
