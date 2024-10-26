@@ -77,7 +77,7 @@ const Container = styled.div`
 `;
 
 const DescriptionContainer = styled.div`
-  width: 100%
+  width: 80%;
   margin-top: 10px;
   margin-left: 30px;
   background-color: #ffffff;
