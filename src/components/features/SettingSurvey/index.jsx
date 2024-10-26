@@ -33,14 +33,13 @@ export const SettingSurvey = () => {
   const handleSurveySubmit = async () => {
     const questionList = questions.map((question) => {
       return {
-        text: question.question, // 질문 텍스트
-        question_type: question.type, // 질문 타입 추가
-        options: question.options || [], // 선택지가 있을 경우 추가
+        text: question.question,
+        question_type: question.type,
+        options: question.options || [],
       };
     });
 
     const formData = new FormData();
-
     formData.append("title", title);
     formData.append("start_date", startDate.toISOString().split("T")[0]);
     formData.append("due_date", dueDate.toISOString().split("T")[0]);
@@ -49,44 +48,27 @@ export const SettingSurvey = () => {
     formData.append("reward_type", rewardType);
     formData.append("reward_count", rewardCount);
 
-    // 리워드 이미지가 있다면 FormData에 추가
     if (rewardImage) {
       formData.append("reward_image", rewardImage);
     }
 
+    formData.append(
+      "survey",
+      JSON.stringify({
+        title,
+        start_date: startDate.toISOString().split("T")[0],
+        due_date: dueDate.toISOString().split("T")[0],
+        question_list: questionList,
+        reward_type: rewardType,
+        reward_count: rewardCount,
+        reward_image: rewardImage ? rewardImage.name : null, 
+      })
+    );
+
     try {
-      // 설문 데이터와 리워드 이미지 전송
-      const response = await axios.post(
-        "http://13.125.238.177:8080/api/surveys",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data", // FormData를 사용할 때는 이 헤더를 설정
-          },
-        }
-      );
-
-      // const surveyData = {
-      //   title: title,
-      //   start_date: startDate.toISOString().split("T")[0], // ISO 형식으로 변환하여 날짜 설정
-      //   due_date: dueDate.toISOString().split("T")[0],
-      //   public_access: publicAccess,
-      //   question_list: questionList,
-      //   reward_type: rewardType,
-      //   reward_count: rewardCount,
-      //   reward_image: formData.append("survey", JSON.stringify(rewardImage)),
-      // };
-
-      // try {
-      //   const response = await axios.post(
-      //     "http://13.125.238.177:8080/api/surveys",
-      //     surveyData,
-      //     {
-      //       headers: {
-      //         "Content-Type": "application/json",
-      //       },
-      //     }
-      //   );
+      const response = await axios.post("/api/surveys", formData, {
+        withCredentials: true,
+      });
 
       console.log("Survey created successfully", response.data);
       alert("설문 등록이 완료되었습니다.");
