@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import sursim from "../../../assets/images/sursim.png";
+import sursim from "../../../assets/images/sursim_home.png";
 import banner from "../../../assets/images/logos/BannerLogo.png";
 import { useNavigate } from "react-router-dom";
 

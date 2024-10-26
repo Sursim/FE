@@ -53,6 +53,48 @@ const SurveyData = [
     points: 500,
     duration: "24/04/23~24/04/30",
   },
+  {
+    id: 8,
+    title: "환경 보호 인식 조사",
+    target: "20대~50대",
+    points: 800,
+    duration: "24/05/15 ~ 24/05/21",
+  },
+  {
+    id: 9,
+    title: "직장 내 스트레스 요인 조사",
+    target: "20대~40대",
+    points: 900,
+    duration: "24/05/22 ~ 24/05/28",
+  },
+  {
+    id: 10,
+    title: "건강식품 구매 의향 조사",
+    target: "30대~60대",
+    points: 750,
+    duration: "24/05/29 ~ 24/06/04",
+  },
+  {
+    id: 11,
+    title: "학생들의 학습 환경 조사",
+    target: "학생",
+    points: 650,
+    duration: "24/06/05 ~ 24/06/11",
+  },
+  {
+    id: 12,
+    title: "여행 소비 트렌드 조사",
+    target: "20대~40대",
+    points: 700,
+    duration: "24/06/12 ~ 24/06/18",
+  },
+  {
+    id: 13,
+    title: "디지털 기기 사용 패턴 조사",
+    target: "10대~50대",
+    points: 720,
+    duration: "24/06/19 ~ 24/06/25",
+  },
 ];
 
 const itemsPerPage = 6;
